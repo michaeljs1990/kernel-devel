@@ -15,10 +15,9 @@ make install
 Next you will want to configure your kernel with the following. After you have done so apply
 anything special you need in linux/.config.
 
-...
+```
 make linux-config
-...
-
+```
 
 Now you can build your kernel with the following.
 
