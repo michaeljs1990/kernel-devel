@@ -2,3 +2,4 @@
 /linux-firmware
 /dracut
 /modules
+/initramfs-*

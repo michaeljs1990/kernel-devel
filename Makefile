@@ -1,4 +1,4 @@
-.PHONY: install linux-config linux-build modules
+.PHONY: install linux-config linux-build modules dracut-build initramfs-build
 
 linux:
 	@echo "Pulling down the linux kernel..."
@@ -24,9 +24,19 @@ linux/.config:
 
 linux-config: linux/.config
 
-linux-build:
+linux-build: linux linux-config
 	$(MAKE) -C linux
 
 modules: linux-build
 	$(MAKE) -C linux modules_install INSTALL_MOD_PATH=$(CURDIR)/modules
 
+dracut/Makefile.inc: dracut
+	cd $(CURDIR)/dracut && ./configure
+
+dracut-build: dracut/Makefile.inc
+	$(MAKE) -C dracut
+
+initramfs-build: dracut-build modules
+	$(eval IMGVER := $(shell ls -1 modules/lib/modules))
+	sudo $(CURDIR)/dracut/dracut.sh -f --kmoddir $(CURDIR)/modules/lib/modules/$(IMGVER) initramfs-$(IMGVER)
+	sudo chown $(USER):$(USER) initramfs-$(IMGVER)
