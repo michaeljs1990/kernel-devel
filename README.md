@@ -30,3 +30,7 @@ And finally you can prep your modules for setting up your initramfs with.
 ```
 make modules
 ```
+
+For more info on how to use this and what it's doing check out this article [here][1]
+
+[1]: https://michaeljs1990.github.io/docs/linux/kerneldevel.html

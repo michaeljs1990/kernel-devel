@@ -52,3 +52,18 @@ qemu-default:
 	 -smp 4 \
 	 -cpu host \
 	 --enable-kvm
+
+qemu-networked:
+	qemu-system-x86_64 \
+	 -drive file=$(CURDIR)/mkimgs/scratch.qcow,if=virtio \
+	 -kernel $(CURDIR)/linux/arch/x86/boot/bzImage \
+	 -initrd $(CURDIR)/initramfs \
+	 -append "console=ttyS0 root=/dev/vda1 ro" \
+	 -nographic \
+	 -m 2048 \
+	 -smp 4 \
+	 -cpu host \
+ 	 -nic tap,ifname=tap0,script=no,downscript=no \
+	 --enable-kvm
+
+
