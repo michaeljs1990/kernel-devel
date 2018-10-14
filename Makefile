@@ -1,4 +1,4 @@
-.PHONY: install linux-config linux-build modules dracut-build initramfs-build
+.PHONY: install linux-config linux-build modules dracut-build initramfs-build qemu-default
 
 linux:
 	@echo "Pulling down the linux kernel..."
@@ -38,5 +38,17 @@ dracut-build: dracut/Makefile.inc
 
 initramfs-build: dracut-build modules
 	$(eval IMGVER := $(shell ls -1 modules/lib/modules))
-	sudo $(CURDIR)/dracut/dracut.sh -f --kmoddir $(CURDIR)/modules/lib/modules/$(IMGVER) initramfs-$(IMGVER)
-	sudo chown $(USER):$(USER) initramfs-$(IMGVER)
+	sudo $(CURDIR)/dracut/dracut.sh -f --kmoddir $(CURDIR)/modules/lib/modules/$(IMGVER) initramfs
+	sudo chown $(USER):$(USER) initramfs
+
+qemu-default:
+	qemu-system-x86_64 \
+	 -drive file=$(CURDIR)/mkimgs/scratch.qcow,if=virtio \
+	 -kernel $(CURDIR)/linux/arch/x86/boot/bzImage \
+	 -initrd $(CURDIR)/initramfs \
+	 -append "console=ttyS0 root=/dev/vda1 ro" \
+	 -nographic \
+	 -m 2048 \
+	 -smp 4 \
+	 -cpu host \
+	 --enable-kvm
